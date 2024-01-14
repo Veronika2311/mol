@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 SBATCH --job-name=t5        # Название задачи
 SBATCH --error=t5-%j.err        # Файл для вывода ошибок
 SBATCH --output=t5-%j.log       # Файл для вывода результатов
