@@ -1,9 +1,8 @@
 #!/bin/bash
 SBATCH --job-name=t5        # Название задачи
-SBATCH --error=t5-%j.err        # Файл для вывода ошибок
-SBATCH --output=t5-%j.log       # Файл для вывода результатов
+SBATCH --error=/home/vaganeeva/chem_augm_finetune/logs/t5augmtrain.err        # Файл для вывода ошибок
+SBATCH --output=/home/vaganeeva/chem_augm_finetune/logs/t5augmtrain.log       # Файл для вывода результатов
 SBATCH --time=23:59:00         # Максимальное время выполнения
-SBATCH --ntasks=16             # Количество MPI процессов
 SBATCH --gpus=1                # Требуемое кол-во GPU
 SBATCH --cpus-per-task=2         # Требуемое кол-во CPU
 
