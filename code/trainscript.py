@@ -123,7 +123,7 @@ def train_loop(
         #if step % 1000 == 0:
             #model.save_pretrained(f't5_base_{dname}')
         if epoch % 1 == 0:
-            model.save_pretrained(f't5_base_{epoch}')
+            model.save_pretrained(f'/home/vaganeeva/chem_augm_finetune/trained_models/t5_base_{epoch}')
         
     cleanup()
 
@@ -186,7 +186,7 @@ def main(args):
         print(f'\n\n\n  {dname}\n=====================\n\n')
         model = train_model(d['SMILES'].tolist(), d['description'].tolist(), model_name=args.model_name, 
                             batch_size=args.batch_size, max_epochs=args.max_epochs, max_steps=steps)
-        model.save_pretrained(f't5_base_{dname}')
+        model.save_pretrained(f'/home/vaganeeva/chem_augm_finetune/trained_models/t5_base_{dname}')
 
 
 if __name__ == '__main__':
