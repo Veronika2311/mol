@@ -44,13 +44,16 @@ class DataCollatorWithPadding:
         max_len_labels = max(len(d["labels"]) for d in features)
         batch = self.tokenizer.pad(
             features,
-            padding=True,
+            # padding=True,
+            padding='max_length',
+            truncation=True,
             max_length=max_len_input_ids
 
         )
         ybatch = self.tokenizer.pad(
             {'input_ids': batch['labels'], 'attention_mask': batch['decoder_attention_mask']},
-            padding=True,
+            padding='max_length',
+            truncation=True,
             max_length=max_len_labels
         )
         batch['labels'] = ybatch['input_ids']
