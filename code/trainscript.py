@@ -58,9 +58,8 @@ def cleanup():
 def evaluate_model(model, test_dataloader):
     num = 0
     den = 0
-
-    for batch in test_dataloader:
-        with torch.no_grad():
+    with torch.no_grad():
+        for batch in test_dataloader:
             loss = model(**{k: v.to(model.device) for k, v in batch.items()}).loss
             num += len(batch) * loss.item()
             den += len(batch)
@@ -82,17 +81,23 @@ def train_loop(
 
     #ewm_loss = 0
     step = 0
+    
     model.train()
 
-    for epoch in trange(max_epochs):
-        print(step, max_steps)
+    for epoch in range(max_epochs):
+        epoch_train_loss_sum = 0.
+        num_epoch_steps = 0
+        print(f"Epoch {epoch} / {max_epochs}")
         if step >= max_steps:
             break
         tq = tqdm(train_dataloader)
+        model.train()
         for i, batch in enumerate(tq):
             try:
                 batch['labels'][batch['labels']==0] = -100
                 loss = model(**{k: v.to(model.device) for k, v in batch.items()}).loss
+                epoch_train_loss_sum += float(loss)
+                num_epoch_steps += 1
                 loss.backward()
             except Exception as e:
                 print('error on step', i, e)
@@ -114,12 +119,18 @@ def train_loop(
             #tq.set_description(f'loss: {ewm_loss:4.4f}')
             tq.set_description(f'loss: {loss:4.4f}')
 
-            if (i and i % report_step == 0 or i == len(train_dataloader)-1)  and val_dataloader is not None:
-                model.eval()
-                eval_loss = evaluate_model(model, val_dataloader)
-                model.train()
-                print(f'epoch {epoch}, step {i}/{step}: train loss: {loss:4.4f}  val loss: {eval_loss:4.4f}')
-                
+            #if (i and i % report_step == 0 or i == len(train_dataloader)-1)  and val_dataloader is not None:
+            #    model.eval()
+            #    eval_loss = evaluate_model(model, val_dataloader)
+            #    model.train()
+            #    print(f'epoch {epoch}, step {i}/{step}: train loss: {loss:4.4f}  val loss: {eval_loss:4.4f}')
+        del batch
+        optimizer.zero_grad()
+        model.eval()
+        train_loss = epoch_train_loss_sum / num_epoch_steps
+        val_loss = evaluate_model(model, val_dataloader)
+        print(f'epoch {epoch}, step {i}/{step}. train loss: {train_loss:4.4f}  val loss: {val_loss:4.4f}')
+                    
         #if step % 1000 == 0:
             #model.save_pretrained(f't5_base_{dname}')
         if epoch % 1 == 0:
@@ -133,8 +144,8 @@ def train_model(x, y, model_name, test_size=0.1, batch_size=32, **kwargs):
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
     x1, x2, y1, y2 = train_test_split(x, y, test_size=test_size, random_state=42)
-    train_dataset = PairsDataset(tokenizer(x1), tokenizer(y1))
-    test_dataset = PairsDataset(tokenizer(x2), tokenizer(y2))
+    train_dataset = PairsDataset(tokenizer(x1, padding='max_length', truncation=True), tokenizer(y1, padding='max_length', truncation=True))
+    test_dataset = PairsDataset(tokenizer(x2, padding='max_length', truncation=True), tokenizer(y2))
     
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
     train_dataloader = DataLoader(train_dataset, batch_size=batch_size, drop_last=False, shuffle=True, collate_fn=data_collator)
