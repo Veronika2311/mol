@@ -40,13 +40,18 @@ class DataCollatorWithPadding:
         self.tokenizer = tokenizer
 
     def __call__(self, features: List[Dict[str, Union[List[int], torch.Tensor]]]) -> Dict[str, torch.Tensor]:
+        max_len_input_ids = max(len(d["input_ids"]) for d in features)
+        max_len_labels = max(len(d["labels"]) for d in features)
         batch = self.tokenizer.pad(
             features,
             padding=True,
+            max_length=max_len_input_ids
+
         )
         ybatch = self.tokenizer.pad(
             {'input_ids': batch['labels'], 'attention_mask': batch['decoder_attention_mask']},
             padding=True,
+            max_length=max_len_labels
         )
         batch['labels'] = ybatch['input_ids']
         # TODO: note that I comment this
@@ -123,7 +128,7 @@ def train_loop(
             # w = 1 / min(i+1, window)
             # ewm_loss = ewm_loss * (1-w) + loss.item() * w
             # tq.set_description(f'loss: {ewm_loss:4.4f}')
-            tq.set_description(f'loss: {loss:4.4f}')
+            tq.set_description(f'\nloss: {loss:4.4f}')
 
             # if (i and i % report_step == 0 or i == len(train_dataloader)-1)  and val_dataloader is not None:
             #    model.eval()
