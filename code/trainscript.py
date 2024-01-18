@@ -107,6 +107,7 @@ def train_loop(
             break
         tq = tqdm(train_dataloader)
         model.train()
+        optimizer.zero_grad()
         for i, batch in enumerate(tq):
 
             batch['labels'][batch['labels'] == 0] = -100
@@ -189,6 +190,9 @@ def parse_args():
     parser.add_argument('--batch_size', type=int, required=True, help='batch_size', )
     parser.add_argument('--learning_rate', type=float, required=False, help='learning_rate',
                         default=3e-5)
+    parser.add_argument('--gradient_accumulation_steps', type=int, required=False, default=4,
+                        help='gradient_accumulation_steps', )
+
     parser.add_argument('--output_dir', required=True)
 
     # parser.add_argument('--df', type=str, required=False,
@@ -219,6 +223,7 @@ def main(args):
     max_length_molecule = args.max_length_molecule
     max_length_text = args.max_length_text
     learning_rate = args.learning_rate
+    gradient_accumulation_steps = args.gradient_accumulation_steps
     # device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
     # model_name = 'C:/Users/veron/notebooks/biochemnlp/model'

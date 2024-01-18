@@ -11,4 +11,5 @@ python /home/vaganeeva/chem_augm_finetune/mol/code/trainscript.py --df '/home/va
  --max_epochs 20 \
  --batch_size 16 \
  --learning_rate 1e-4 \
+ --gradient_accumulation_steps 2 \
  --output_dir "/home/vaganeeva/chem_augm_finetune/trained_models/molt5-base-smiles2caption_lr1e-4"
