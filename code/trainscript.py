@@ -129,7 +129,7 @@ def train_loop(
             # w = 1 / min(i+1, window)
             # ewm_loss = ewm_loss * (1-w) + loss.item() * w
             # tq.set_description(f'loss: {ewm_loss:4.4f}')
-            tq.set_description(f'\nloss: {loss:4.4f}')
+            tq.set_description(f'\nloss: {float(loss):4.4f}')
 
             # if (i and i % report_step == 0 or i == len(train_dataloader)-1)  and val_dataloader is not None:
             #    model.eval()
@@ -141,7 +141,7 @@ def train_loop(
         model.eval()
         train_loss = epoch_train_loss_sum / num_epoch_steps
         val_loss = evaluate_model(model, val_dataloader)
-        logging.info(f'epoch {epoch}. train loss: {train_loss:4.4f}  val loss: {val_loss:4.4f}')
+        logging.info(f'epoch {epoch}. train loss: {float(train_loss):4.4f}  val loss: {float(val_loss):4.4f}')
 
         # if step % 1000 == 0:
         # model.save_pretrained(f't5_base_{dname}')
