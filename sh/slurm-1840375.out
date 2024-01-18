@@ -1,0 +1,8 @@
+/var/spool/slurm/d/job1840375/slurm_script: line 2: SBATCH: command not found
+/var/spool/slurm/d/job1840375/slurm_script: line 3: SBATCH: command not found
+/var/spool/slurm/d/job1840375/slurm_script: line 4: SBATCH: command not found
+/var/spool/slurm/d/job1840375/slurm_script: line 5: SBATCH: command not found
+/var/spool/slurm/d/job1840375/slurm_script: line 6: SBATCH: command not found
+/var/spool/slurm/d/job1840375/slurm_script: line 7: SBATCH: command not found
+/var/spool/slurm/d/job1840375/slurm_script: line 8: SBATCH: command not found
+slurmstepd: error: *** JOB 1840375 ON cn-038 CANCELLED AT 2024-01-15T01:09:08 ***

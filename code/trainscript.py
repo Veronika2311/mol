@@ -129,7 +129,7 @@ def train_loop(
             # w = 1 / min(i+1, window)
             # ewm_loss = ewm_loss * (1-w) + loss.item() * w
             # tq.set_description(f'loss: {ewm_loss:4.4f}')
-            tq.set_description(f'\nloss: {float(loss):4.4f}')
+            tq.set_description(f'loss: {float(loss):4.4f}')
 
             # if (i and i % report_step == 0 or i == len(train_dataloader)-1)  and val_dataloader is not None:
             #    model.eval()

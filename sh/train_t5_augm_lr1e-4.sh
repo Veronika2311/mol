@@ -9,7 +9,7 @@
 python /home/vaganeeva/chem_augm_finetune/mol/code/trainscript.py --df '/home/vaganeeva/chem_augm_finetune/data/augm_train_full.txt' \
  --model_name '/home/vaganeeva/hugging_face/GT4SD/multitask-text-and-chemistry-t5-base-standard' \
  --max_epochs 20 \
- --batch_size 32 \
+ --batch_size 16 \
  --learning_rate 1e-4 \
  --max_length_molecule 256 \
  --max_length_text 256 \
