@@ -11,7 +11,7 @@ import pandas as pd
 import torch
 from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset, DataLoader
-from tqdm.auto import tqdm
+from tqdm import tqdm
 from transformers import T5ForConditionalGeneration, AutoTokenizer
 
 
@@ -108,17 +108,13 @@ def train_loop(
         tq = tqdm(train_dataloader)
         model.train()
         for i, batch in enumerate(tq):
-            try:
-                batch['labels'][batch['labels'] == 0] = -100
-                loss = model(**{k: v.to(model.device) for k, v in batch.items()}).loss
-                epoch_train_loss_sum += float(loss)
-                num_epoch_steps += 1
-                loss.backward()
-            except Exception as e:
-                print('error on step', i, e)
-                loss = None
-                cleanup()
-                continue
+
+            batch['labels'][batch['labels'] == 0] = -100
+            loss = model(**{k: v.to(model.device) for k, v in batch.items()}).loss
+            epoch_train_loss_sum += float(loss)
+            num_epoch_steps += 1
+            loss.backward()
+
             if i and i % gradient_accumulation_steps == 0:
                 optimizer.step()
                 optimizer.zero_grad()
@@ -190,8 +186,9 @@ def parse_args():
                         help='max_epochs', )
     parser.add_argument('--max_length_molecule', type=int, default=512, required=False)
     parser.add_argument('--max_length_text', type=int, default=512, required=False)
-    parser.add_argument('--batch_size', type=int, required=True,
-                        help='batch_size', )
+    parser.add_argument('--batch_size', type=int, required=True, help='batch_size', )
+    parser.add_argument('--learning_rate', type=float, required=False, help='learning_rate',
+                        default=3e-5)
     parser.add_argument('--output_dir', required=True)
 
     # parser.add_argument('--df', type=str, required=False,
@@ -221,6 +218,7 @@ def main(args):
         os.makedirs(output_dir)
     max_length_molecule = args.max_length_molecule
     max_length_text = args.max_length_text
+    learning_rate = args.learning_rate
     # device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
     # model_name = 'C:/Users/veron/notebooks/biochemnlp/model'
@@ -235,7 +233,7 @@ def main(args):
         model = train_model(d['SMILES'].tolist(), d['description'].tolist(), model_name=args.model_name,
                             batch_size=args.batch_size, max_epochs=args.max_epochs, max_steps=steps,
                             max_length_text=max_length_text, max_length_molecule=max_length_molecule,
-                            output_dir=output_dir)
+                            lr=learning_rate, output_dir=output_dir)
         model.save_pretrained(os.path.join(output_dir, "final_checkpoint/"))
 
 
