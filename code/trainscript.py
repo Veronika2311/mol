@@ -59,7 +59,7 @@ class DataCollatorWithPadding:
         )
         batch['labels'] = ybatch['input_ids']
         # TODO: note that I comment this
-        batch['decoder_attention_mask'] = ybatch['attention_mask']
+        # batch['decoder_attention_mask'] = ybatch['attention_mask']
 
         return {k: torch.tensor(v) for k, v in batch.items()}
 
