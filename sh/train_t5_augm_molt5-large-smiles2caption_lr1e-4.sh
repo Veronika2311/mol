@@ -9,7 +9,9 @@
 python /home/vaganeeva/chem_augm_finetune/mol/code/trainscript.py --df '/home/vaganeeva/chem_augm_finetune/data/augm_train_full.txt' \
  --model_name '/home/vaganeeva/hugging_face/laituan245/molt5-large-smiles2caption' \
  --max_epochs 20 \
- --batch_size 16 \
+ --batch_size 32 \
  --learning_rate 1e-4 \
  --gradient_accumulation_steps 2 \
+ --max_length_molecule 256 \
+ --max_length_text 256 \
  --output_dir "/home/vaganeeva/chem_augm_finetune/trained_models/molt5-large-smiles2caption_lr1e-4"
