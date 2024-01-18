@@ -44,21 +44,22 @@ class DataCollatorWithPadding:
         max_len_labels = max(len(d["labels"]) for d in features)
         batch = self.tokenizer.pad(
             features,
-            # padding=True,
-            padding='max_length',
-            truncation=True,
-            max_length=max_len_input_ids
+            padding=True,
+            #padding='max_length',
+            #truncation=True,
+            #max_length=max_len_input_ids
 
         )
         ybatch = self.tokenizer.pad(
             {'input_ids': batch['labels'], 'attention_mask': batch['decoder_attention_mask']},
-            padding='max_length',
-            truncation=True,
-            max_length=max_len_labels
+            #padding='max_length',
+            padding=True
+            #truncation=True,
+            #max_length=max_len_labels
         )
         batch['labels'] = ybatch['input_ids']
         # TODO: note that I comment this
-        # batch['decoder_attention_mask'] = ybatch['attention_mask']
+        batch['decoder_attention_mask'] = ybatch['attention_mask']
 
         return {k: torch.tensor(v) for k, v in batch.items()}
 
@@ -84,8 +85,8 @@ def train_loop(
         model, train_dataloader, val_dataloader, output_dir,
         max_epochs=30,
         max_steps=1_000,
-        lr=3e-4,
-        gradient_accumulation_steps=1,
+        lr=3e-5,
+        gradient_accumulation_steps=4,
         cleanup_step=100,
         report_step=300,
         window=100,
