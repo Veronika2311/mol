@@ -161,7 +161,7 @@ def train_model(x, y, model_name, max_length_molecule, max_length_text, test_siz
     train_dataset = PairsDataset(tokenizer(x1, padding='max_length', truncation=True, max_length=max_length_molecule),
                                  tokenizer(y1, padding='max_length', truncation=True, max_length=max_length_text))
     test_dataset = PairsDataset(tokenizer(x2, padding='max_length', truncation=True, max_length=max_length_molecule),
-                                tokenizer(y2))
+                                tokenizer(y2, padding='max_length', truncation=True, max_length=max_length_text))
 
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
     train_dataloader = DataLoader(train_dataset, batch_size=batch_size, drop_last=False, shuffle=True,
