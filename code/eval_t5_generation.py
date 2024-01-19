@@ -31,14 +31,17 @@ def parse_args():
 
 
 def main(args):
+    logging.info("Evaluating with parameters:")
+    for k, v in vars(args).items():
+        logging.info(f"{k} : {v}")
     base_model = args.base_model
     test_path = args.test_path
     checkpoint_path = args.checkpoint_path
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
-
+    logging.info("Loading model and tokenizer...")
     tokenizer_chemt5 = AutoTokenizer.from_pretrained(base_model)
     model_chem_t5 = AutoModel.from_pretrained(checkpoint_path).eval().to(device)
-
+    logging.info("Model and tokenizer loaded...")
     test_df = pd.read_csv(test_path, sep='\t')
     max_length = args.max_length
     batch_size = args.batch_size
@@ -47,7 +50,7 @@ def main(args):
     output_dir = args.output_dir
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-
+    logging.info("Making predictions....")
     with torch.no_grad():
         res = []
         for i in tqdm(range(0, len(test_df['SMILES']), batch_size)):
@@ -63,6 +66,8 @@ def main(args):
     res_df["prediction"] = res
     output_pred_path = os.path.join(output_dir, f"pref_{test_fname}")
     res_df.to_csv(output_pred_path, sep='\t')
+
+    logging.info("Calculating metrics...")
 
     canonical = res
     original = test_df["description"].tolist()
