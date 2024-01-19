@@ -11,6 +11,7 @@
 for i in {0..19};
 do
 
+echo "Evaluating epoch ${i}"
 mkdir -p /home/vaganeeva/chem_augm_finetune/mol/evaluation_results/augm_multitask-text-and-chemistry-t5-base-standard}/${i}
 python /home/vaganeeva/chem_augm_finetune/mol/code/eval_t5_generation.py \
 --test_path "/home/vaganeeva/chem_augm_finetune/mol/augm_test_from_test.txt" \
