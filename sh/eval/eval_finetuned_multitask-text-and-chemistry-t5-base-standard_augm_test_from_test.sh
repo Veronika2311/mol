@@ -18,7 +18,7 @@ python /home/vaganeeva/chem_augm_finetune/mol/code/eval_t5_generation.py \
 --checkpoint_path "/home/vaganeeva/chem_augm_finetune/trained_models/multitask-text-and-chemistry-t5-base-standard/e_${i}" \
 --base_model "/home/vaganeeva/hugging_face/GT4SD/multitask-text-and-chemistry-t5-base-standard" \
 --max_length 512 \
---batch_size 32 \
---output_dir "/home/vaganeeva/chem_augm_finetune/mol/evaluation_results/augm_multitask-text-and-chemistry-t5-base-standard_augm_test/${i}";
---output_pred_file "/home/vaganeeva/chem_augm_finetune/mol/evaluation_results/augm_multitask-text-and-chemistry-t5-base-standard_augm_test/epoch_${i}_pred.tsv"
+--batch_size 16 \
+--output_dir "/home/vaganeeva/chem_augm_finetune/mol/evaluation_results/augm_multitask-text-and-chemistry-t5-base-standard_augm_test/${i}" \
+--output_pred_file "/home/vaganeeva/chem_augm_finetune/mol/evaluation_results/augm_multitask-text-and-chemistry-t5-base-standard_augm_test/epoch_${i}_pred.tsv";
 done
