@@ -6,8 +6,6 @@ import torch
 from transformers import AutoTokenizer, T5ForConditionalGeneration, AutoModel
 import pandas as pd
 from tqdm import tqdm
-from luna.calculate import Calculator
-from luna.ngram import BLEUMetrics, ROUGEMetrics, METEORMetrics
 import numpy as np
 
 
@@ -68,6 +66,10 @@ def main(args):
     res_df.to_csv(output_pred_path, sep='\t')
 
     logging.info("Calculating metrics...")
+
+    from luna.calculate import Calculator
+    from luna.ngram import BLEUMetrics, ROUGEMetrics, METEORMetrics
+    logging.info("Imported Luna.")
 
     canonical = res
     original = test_df["description"].tolist()
