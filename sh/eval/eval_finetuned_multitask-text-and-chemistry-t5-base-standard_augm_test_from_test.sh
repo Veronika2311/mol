@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=t5        # Название задачи
+#SBATCH --job-name=eval_t5        # Название задачи
 #SBATCH --error=/home/vaganeeva/chem_augm_finetune/logs/eval_finetuned_multitask-text-and-chemistry-t5-base-standard_augm_test_from_test.err        # Файл для вывода ошибок
 #SBATCH --output=/home/vaganeeva/chem_augm_finetune/logs/eval_finetuned_multitask-text-and-chemistry-t5-base-standard_augm_test_from_test.log       # Файл для вывода результатов
 #SBATCH --time=32:59:00         # Максимальное время выполнения
