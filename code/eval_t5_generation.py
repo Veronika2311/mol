@@ -23,6 +23,7 @@ def parse_args():
     parser.add_argument('--max_length', type=int, default=512, required=False)
     parser.add_argument('--batch_size', type=int, default=32, required=False)
     parser.add_argument('--output_dir', required=True)
+    parser.add_argument('--output_pred_file', required=True)
 
     args = parser.parse_args()
     return args
@@ -38,7 +39,7 @@ def main(args):
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
     logging.info("Loading model and tokenizer...")
     tokenizer_chemt5 = AutoTokenizer.from_pretrained(base_model)
-    model_chem_t5 = AutoModel.from_pretrained(checkpoint_path).eval().to(device)
+    model_chem_t5 = T5ForConditionalGeneration.from_pretrained(checkpoint_path).eval().to(device)
     logging.info("Model and tokenizer loaded...")
     test_df = pd.read_csv(test_path, sep='\t')
     max_length = args.max_length
@@ -48,6 +49,7 @@ def main(args):
     output_dir = args.output_dir
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
+    output_pred_file = args.output_pred_file
     logging.info("Making predictions....")
     with torch.no_grad():
         res = []
@@ -62,49 +64,50 @@ def main(args):
     assert len(res) == test_df.shape[0]
     res_df = pd.DataFrame()
     res_df["prediction"] = res
-    output_pred_path = os.path.join(output_dir, f"pref_{test_fname}")
+    output_pred_path = os.path.join(output_dir, f"pred_{test_fname}")
     res_df.to_csv(output_pred_path, sep='\t')
+    res_df.to_csv(output_pred_file, sep='\t')
 
     logging.info("Calculating metrics...")
 
-    from luna.calculate import Calculator
-    from luna.ngram import BLEUMetrics, ROUGEMetrics, METEORMetrics
-    logging.info("Imported Luna.")
-
-    canonical = res
-    original = test_df["description"].tolist()
-
-    metrics = [ROUGEMetrics('1')]
-    calculator = Calculator(execute_parallel=True)
-    metrics_dict = calculator.calculate(metrics=metrics, hyps=canonical, refs=original)
-    for metric_name, metric_list in metrics_dict():
-        print("ROUGE-1")
-        print(np.mean(metric_list))
-        print("----------------------")
-
-    metrics = [ROUGEMetrics('2')]
-    calculator = Calculator(execute_parallel=True)
-    metrics_dict = calculator.calculate(metrics=metrics, hyps=canonical, refs=original)
-    for metric_name, metric_list in metrics_dict():
-        print("ROUGE-2")
-        print(np.mean(metric_list))
-        print("----------------------")
-
-    metrics = [ROUGEMetrics('L')]
-    calculator = Calculator(execute_parallel=True)
-    metrics_dict = calculator.calculate(metrics=metrics, hyps=canonical, refs=original)
-    for metric_name, metric_list in metrics_dict():
-        print("ROUGE-L")
-        print(np.mean(metric_list))
-        print("----------------------")
-
-    metrics = [BLEUMetrics(), METEORMetrics()]
-    calculator = Calculator(execute_parallel=True)
-    metrics_dict = calculator.calculate(metrics=metrics, hyps=canonical, refs=original)
-    for metric_name, metric_list in metrics_dict():
-        print(metric_name)
-        print(np.mean(metric_list))
-        print("----------------------")
+    # from luna.calculate import Calculator
+    # from luna.ngram import BLEUMetrics, ROUGEMetrics, METEORMetrics
+    # logging.info("Imported Luna.")
+    #
+    # canonical = res
+    # original = test_df["description"].tolist()
+    #
+    # metrics = [ROUGEMetrics('1')]
+    # calculator = Calculator(execute_parallel=True)
+    # metrics_dict = calculator.calculate(metrics=metrics, hyps=canonical, refs=original)
+    # for metric_name, metric_list in metrics_dict():
+    #     print("ROUGE-1")
+    #     print(np.mean(metric_list))
+    #     print("----------------------")
+    #
+    # metrics = [ROUGEMetrics('2')]
+    # calculator = Calculator(execute_parallel=True)
+    # metrics_dict = calculator.calculate(metrics=metrics, hyps=canonical, refs=original)
+    # for metric_name, metric_list in metrics_dict():
+    #     print("ROUGE-2")
+    #     print(np.mean(metric_list))
+    #     print("----------------------")
+    #
+    # metrics = [ROUGEMetrics('L')]
+    # calculator = Calculator(execute_parallel=True)
+    # metrics_dict = calculator.calculate(metrics=metrics, hyps=canonical, refs=original)
+    # for metric_name, metric_list in metrics_dict():
+    #     print("ROUGE-L")
+    #     print(np.mean(metric_list))
+    #     print("----------------------")
+    #
+    # metrics = [BLEUMetrics(), METEORMetrics()]
+    # calculator = Calculator(execute_parallel=True)
+    # metrics_dict = calculator.calculate(metrics=metrics, hyps=canonical, refs=original)
+    # for metric_name, metric_list in metrics_dict():
+    #     print(metric_name)
+    #     print(np.mean(metric_list))
+    #     print("----------------------")
 
 
 if __name__ == '__main__':

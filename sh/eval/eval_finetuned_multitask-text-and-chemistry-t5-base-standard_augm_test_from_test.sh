@@ -20,5 +20,5 @@ python /home/vaganeeva/chem_augm_finetune/mol/code/eval_t5_generation.py \
 --max_length 512 \
 --batch_size 32 \
 --output_dir "/home/vaganeeva/chem_augm_finetune/mol/evaluation_results/augm_multitask-text-and-chemistry-t5-base-standard_augm_test/${i}";
-
+--output_pred_file "/home/vaganeeva/chem_augm_finetune/mol/evaluation_results/augm_multitask-text-and-chemistry-t5-base-standard_augm_test/epoch_${i}_pred.tsv"
 done
